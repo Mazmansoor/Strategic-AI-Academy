@@ -18,7 +18,8 @@
     "@stripe/stripe-js": "^3.0.0",
     "recharts": "^2.12.0",
     "bcryptjs": "^2.4.3",
-    "zod": "^3.22.0"
+    "zod": "^3.22.0",
+    "lucide-react": "^0.309.0"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
