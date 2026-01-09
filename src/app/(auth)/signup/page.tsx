@@ -52,25 +52,25 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
-        <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-bold text-blue-600">
+    <div className="min-h-screen bg-white flex items-center justify-center p-8">
+      <div className="max-w-md w-full">
+        <div className="mb-12">
+          <Link href="/" className="text-lg font-medium text-gray-900 tracking-tight">
             Strategic AI Academy
           </Link>
-          <h2 className="text-2xl font-bold text-gray-900 mt-4">Create Account</h2>
-          <p className="text-gray-600 mt-2">Start your AI mastery journey today</p>
+          <h2 className="text-3xl font-light text-gray-900 mt-8 mb-3">Create Account</h2>
+          <p className="text-gray-600">Begin developing judgment</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="border border-gray-900 bg-gray-50 text-gray-900 px-4 py-3 text-sm">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
               Full Name
             </label>
             <input
@@ -79,14 +79,14 @@ export default function SignupPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors"
               placeholder="John Doe"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
+            <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
+              Email
             </label>
             <input
               id="email"
@@ -94,13 +94,13 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors"
               placeholder="your@email.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
               Password
             </label>
             <input
@@ -110,13 +110,13 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={8}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors"
               placeholder="••••••••"
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 mb-2">
               Confirm Password
             </label>
             <input
@@ -125,7 +125,7 @@ export default function SignupPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors"
               placeholder="••••••••"
             />
           </div>
@@ -133,23 +133,23 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gray-900 text-white py-3 hover:bg-gray-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600">
+        <div className="mt-8 pt-8 border-t border-gray-200">
+          <p className="text-sm text-gray-600">
             Already have an account?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+            <Link href="/login" className="text-gray-900 border-b border-gray-900 hover:border-gray-400 transition-colors">
               Sign In
             </Link>
           </p>
         </div>
 
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-600 hover:text-gray-800">
+        <div className="mt-6">
+          <Link href="/" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
             ← Back to Home
           </Link>
         </div>
