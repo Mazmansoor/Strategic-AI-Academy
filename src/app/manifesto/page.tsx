@@ -23,6 +23,12 @@ export default function ManifestoPage() {
               Diagnostic
             </Link>
             <Link
+              href="/how-it-works"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              How It Works
+            </Link>
+            <Link
               href="/manifesto"
               className="text-sm text-gray-900 font-medium"
             >

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { diagnosticQuestions } from '@/lib/constants';
 
 export default function DiagnosticPage() {
@@ -86,6 +87,47 @@ export default function DiagnosticPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-8 py-6 flex justify-between items-center">
+          <Link href="/" className="text-lg font-medium text-gray-900 tracking-tight">
+            Strategic AI Academy
+          </Link>
+          <div className="flex gap-8 items-center">
+            <Link
+              href="/courses"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Capabilities
+            </Link>
+            <Link
+              href="/diagnostic"
+              className="text-sm text-gray-900 font-medium"
+            >
+              Diagnostic
+            </Link>
+            <Link
+              href="/how-it-works"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              How It Works
+            </Link>
+            <Link
+              href="/manifesto"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Manifesto
+            </Link>
+            <Link
+              href="/login"
+              className="text-sm text-gray-900 border border-gray-900 px-4 py-2 hover:bg-gray-900 hover:text-white transition-colors"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       <div className="max-w-3xl mx-auto px-8 py-16">
         <div className="mb-16">
           {/* Minimal progress indicator */}
