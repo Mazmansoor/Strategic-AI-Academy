@@ -1,4 +1,4 @@
-# Strategic AI Academy - Next.js Full-Stack Platform
+# Zavia Strategic AI Academy - Next.js Full-Stack Platform
 
 🎓 **Complete learning management system with:**
 - ✅ User authentication (NextAuth.js)
