@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Strategic AI Academy - From Foundation to Mastery',
-  description: 'The Anti-Bootcamp: Compressed, rigorous AI training that builds judgment—not just tool knowledge.',
+  title: 'Strategic AI Academy',
+  description: 'A discipline for leaders making irreversible decisions in the age of machine intelligence.',
 }
 
 export default function RootLayout({

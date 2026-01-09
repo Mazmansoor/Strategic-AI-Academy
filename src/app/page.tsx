@@ -1,25 +1,30 @@
 import Link from 'next/link';
-import { ArrowRight, Target, BarChart3, Zap } from 'lucide-react';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-blue-600">
+      <nav className="border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-8 py-6 flex justify-between items-center">
+          <Link href="/" className="text-lg font-medium text-gray-900 tracking-tight">
             Strategic AI Academy
           </Link>
-          <div className="flex gap-4">
+          <div className="flex gap-8 items-center">
             <Link
               href="/courses"
-              className="text-gray-700 hover:text-blue-600 font-medium"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
-              Browse Courses
+              Capabilities
+            </Link>
+            <Link
+              href="/diagnostic"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Diagnostic
             </Link>
             <Link
               href="/login"
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium"
+              className="text-sm text-gray-900 border border-gray-900 px-4 py-2 hover:bg-gray-900 hover:text-white transition-colors"
             >
               Sign In
             </Link>
@@ -28,64 +33,62 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-8 py-20">
-        <div className="text-center mb-16">
-          <h1 className="text-6xl font-bold text-gray-900 mb-6">
-            From Foundation to Mastery<br />in Strategic AI
+      <div className="max-w-4xl mx-auto px-8 py-24">
+        <div className="mb-24">
+          <h1 className="text-5xl font-light text-gray-900 mb-8 leading-tight tracking-tight">
+            Learn to think strategically with AI—<br />before AI thinks for you.
           </h1>
-          <p className="text-2xl text-gray-700 mb-8 max-w-3xl mx-auto">
-            The Anti-Bootcamp: Compressed, rigorous training that builds judgment—not just tool knowledge.
-            Go from knowing nothing to making AI decisions that create enterprise value.
+          <p className="text-xl text-gray-700 mb-12 leading-relaxed max-w-2xl font-light">
+            This is not a bootcamp. It is a discipline for leaders making irreversible decisions in the age of machine intelligence.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/diagnostic"
-              className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg flex items-center gap-2"
-            >
-              Take Free Diagnostic
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="/courses"
-              className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-blue-50 transition-colors"
-            >
-              Explore Courses
-            </Link>
-          </div>
-          <p className="text-sm text-gray-600 mt-4">
-            Discover your AI skill gaps in 15 minutes • Get personalized learning path
+          <p className="text-base text-gray-600 mb-16 leading-relaxed max-w-2xl">
+            AI is reshaping who holds power in organizations—not through formal authority, but through the quiet delegation of judgment.
+            When decisions accelerate and intelligence becomes externalized, the question is no longer whether you use AI.
+            It is whether you still understand what you are approving.
           </p>
+          <Link
+            href="/diagnostic"
+            className="inline-block border-2 border-gray-900 text-gray-900 px-8 py-3 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors"
+          >
+            Start Assessment
+          </Link>
         </div>
 
-        {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <Target className="w-12 h-12 text-blue-600 mb-4" />
-            <h3 className="text-xl font-bold mb-3">Strategic Focus</h3>
-            <p className="text-gray-700">
-              Learn judgment and decision-making, not just tools. Understand when and why to apply AI capabilities.
-            </p>
-          </div>
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <BarChart3 className="w-12 h-12 text-blue-600 mb-4" />
-            <h3 className="text-xl font-bold mb-3">Systematic Progression</h3>
-            <p className="text-gray-700">
-              Foundation → Application → Systems → Mastery. Clear competency levels with demonstrable outcomes.
-            </p>
-          </div>
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <Zap className="w-12 h-12 text-blue-600 mb-4" />
-            <h3 className="text-xl font-bold mb-3">Compressed Learning</h3>
-            <p className="text-gray-700">
-              15-20 minute modules with no fluff. Hands-on labs with real AI tools. Build capability, not credentials.
-            </p>
+        {/* Capability Levels */}
+        <div className="mb-32 border-t border-gray-200 pt-16">
+          <h2 className="text-2xl font-light text-gray-900 mb-12">Four Levels of Judgment</h2>
+          <div className="space-y-12">
+            <div className="border-l-2 border-gray-300 pl-8">
+              <h3 className="text-lg font-medium mb-3">Foundation</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Remove false confidence. Understand what AI can and cannot infer. Stop making claims you cannot defend.
+              </p>
+            </div>
+            <div className="border-l-2 border-gray-300 pl-8">
+              <h3 className="text-lg font-medium mb-3">Application</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Enable independent evaluation. Know when output is plausible but wrong. Develop operational skepticism.
+              </p>
+            </div>
+            <div className="border-l-2 border-gray-300 pl-8">
+              <h3 className="text-lg font-medium mb-3">Systems</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Design AI workflows that survive scale. Understand where automation introduces fragility. Build for consequences.
+              </p>
+            </div>
+            <div className="border-l-2 border-gray-300 pl-8">
+              <h3 className="text-lg font-medium mb-3">Mastery</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Know where AI must not be used. Recognize when delegation erodes strategic capacity. Preserve decision authority.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Domains Overview */}
-        <div className="bg-white rounded-2xl shadow-2xl p-12 mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12">The 5 Core AI Domains</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Capabilities Map */}
+        <div className="mb-32 border-t border-gray-200 pt-16">
+          <h2 className="text-2xl font-light text-gray-900 mb-12">Five Critical Capabilities</h2>
+          <div className="space-y-8">
             {[
               {
                 title: 'LLM Fundamentals',
@@ -108,30 +111,27 @@ export default function HomePage() {
                 description: 'Making AI decisions that create value'
               }
             ].map((domain, i) => (
-              <div key={i} className="border-2 border-gray-200 rounded-lg p-6 hover:border-blue-400 transition-colors">
-                <h3 className="text-xl font-bold mb-2">{domain.title}</h3>
-                <p className="text-gray-600 text-sm mb-3">{domain.description}</p>
-                <div className="flex gap-2 flex-wrap">
-                  <span className="bg-gray-100 px-3 py-1 rounded text-xs">4 levels</span>
-                  <span className="bg-gray-100 px-3 py-1 rounded text-xs">6-24 hours</span>
-                  <span className="bg-gray-100 px-3 py-1 rounded text-xs">Hands-on labs</span>
-                </div>
+              <div key={i} className="border-b border-gray-200 pb-6">
+                <h3 className="text-lg font-medium mb-2">{domain.title}</h3>
+                <p className="text-gray-600">{domain.description}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-12 text-center">
-          <h2 className="text-4xl font-bold mb-6">Start Your Journey Today</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Take the diagnostic to discover your skill gaps and get a personalized learning path.
+        {/* Final Section */}
+        <div className="border-t border-gray-200 pt-16">
+          <p className="text-base text-gray-600 mb-8 leading-relaxed max-w-2xl">
+            The diagnostic is not a test. It is a mirror. It shows you what you consistently misjudge when evaluating AI output.
+          </p>
+          <p className="text-base text-gray-600 mb-12 leading-relaxed max-w-2xl">
+            Most users discover they are more confident than competent. That realization is the starting point.
           </p>
           <Link
             href="/diagnostic"
-            className="inline-block bg-white text-blue-600 px-12 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+            className="inline-block border-2 border-gray-900 text-gray-900 px-8 py-3 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors"
           >
-            Take Free Diagnostic
+            Begin Assessment
           </Link>
         </div>
       </div>
