@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { getAllCourses } from '@/lib/db';
-import { Lock } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,28 +7,36 @@ export default async function CoursesPage() {
   const courses = await getAllCourses();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-8">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
-              Strategic AI Academy
+      <nav className="border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-8 py-6 flex justify-between items-center">
+          <Link href="/" className="text-lg font-medium text-gray-900 tracking-tight">
+            Strategic AI Academy
+          </Link>
+          <div className="flex gap-8 items-center">
+            <Link
+              href="/courses"
+              className="text-sm text-gray-900 font-medium"
+            >
+              Capabilities
             </Link>
-            <div className="hidden md:flex space-x-6">
-              <Link href="/courses" className="text-gray-700 hover:text-blue-600 font-medium">
-                Courses
-              </Link>
-              <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">
-                Dashboard
-              </Link>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link href="/diagnostic" className="text-blue-600 hover:text-blue-700 font-medium">
-              Take Diagnostic
+            <Link
+              href="/diagnostic"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Diagnostic
             </Link>
-            <Link href="/login" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium">
+            <Link
+              href="/dashboard"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/login"
+              className="text-sm text-gray-900 border border-gray-900 px-4 py-2 hover:bg-gray-900 hover:text-white transition-colors"
+            >
               Sign In
             </Link>
           </div>
@@ -37,49 +44,56 @@ export default async function CoursesPage() {
       </nav>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">Course Catalog</h1>
-          <p className="text-xl text-gray-700">
-            Systematic progression from Foundation to Mastery across 5 AI domains
+      <div className="max-w-4xl mx-auto px-8 py-24">
+        <div className="mb-24">
+          <h1 className="text-4xl font-light text-gray-900 mb-6">Capabilities</h1>
+          <p className="text-lg text-gray-600 leading-relaxed max-w-2xl">
+            Each capability moves through four levels of judgment. Foundation is free.
+            Advanced levels require demonstrated competence.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-8">
+        <div className="space-y-16">
           {courses.map((course: any) => (
-            <div key={course.id} className="bg-white rounded-xl shadow-lg p-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-2">{course.domain}</h2>
+            <div key={course.id} className="border-t border-gray-200 pt-12">
+              <div className="mb-8">
+                <h2 className="text-2xl font-light text-gray-900 mb-3">{course.domain}</h2>
                 <p className="text-gray-600">{course.description}</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="space-y-6">
                 {course.tracks && course.tracks.map((track: any) => {
                   const priceDisplay = track.price_cents === 0
-                    ? 'Free'
+                    ? 'Foundation'
                     : `$${(track.price_cents / 100).toFixed(0)}`;
 
                   return (
                     <div
                       key={track.id}
-                      className={`border-2 rounded-lg p-4 ${
+                      className={`border-l-2 pl-6 ${
                         track.locked
-                          ? 'border-gray-200 bg-gray-50 opacity-60'
-                          : 'border-blue-200 bg-blue-50 hover:border-blue-400 cursor-pointer'
+                          ? 'border-gray-200'
+                          : 'border-gray-400'
                       }`}
                     >
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold">{track.level}</h3>
-                        {track.locked && <Lock className="w-4 h-4 text-gray-400" />}
+                        <h3 className="text-lg font-medium">{track.level}</h3>
+                        <span className="text-sm text-gray-500">{priceDisplay}</span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">{track.duration}</p>
-                      <p className="text-xs text-gray-500 mb-3">{track.modules} modules</p>
-                      <p className="text-lg font-bold text-blue-600">{priceDisplay}</p>
-                      {!track.locked && (
+                      <p className="text-sm text-gray-500 mb-2">{track.duration} · {track.modules} modules</p>
+                      {!track.locked && track.price_cents === 0 && (
                         <Link
                           href={`/courses/${course.slug}/${track.level.toLowerCase()}`}
-                          className="mt-3 block text-center bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+                          className="inline-block text-sm text-gray-900 border-b border-gray-900 hover:border-gray-400 transition-colors mt-2"
                         >
-                          {track.price_cents === 0 ? 'Start Free' : 'Enroll Now'}
+                          Begin
+                        </Link>
+                      )}
+                      {!track.locked && track.price_cents > 0 && (
+                        <Link
+                          href={`/courses/${course.slug}/${track.level.toLowerCase()}`}
+                          className="inline-block text-sm text-gray-900 border-b border-gray-900 hover:border-gray-400 transition-colors mt-2"
+                        >
+                          View Details
                         </Link>
                       )}
                     </div>
@@ -90,21 +104,6 @@ export default async function CoursesPage() {
           ))}
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-12 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-12 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Learning?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join Strategic AI Academy and build real AI capability from Foundation to Mastery
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link href="/diagnostic" className="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100 font-semibold">
-              Take Diagnostic
-            </Link>
-            <Link href="/signup" className="border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-blue-600 font-semibold">
-              Create Account
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   );
