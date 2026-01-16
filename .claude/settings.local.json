@@ -9,7 +9,9 @@
       "Bash(git push:*)",
       "Bash(gcloud run deploy:*)",
       "Bash(npx rimraf node_modules .next)",
-      "Bash(npm ci:*)"
+      "Bash(npm ci:*)",
+      "Bash(gcloud config get-value:*)",
+      "Bash(gcloud services enable:*)"
     ]
   }
 }
