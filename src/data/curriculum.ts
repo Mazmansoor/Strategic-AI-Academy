@@ -300,6 +300,7 @@ export const COURSE_CURRICULUM: Partial<Course>[] = [
     category: 'strategic' as CourseCategory,
     duration: '10 weeks',
     price: {
+      basic: 0,
       pro: 0,
       enterprise: 0,
     },
@@ -322,6 +323,7 @@ export const COURSE_CURRICULUM: Partial<Course>[] = [
     category: 'strategic' as CourseCategory,
     duration: '12 weeks',
     price: {
+      basic: 0,
       pro: 0,
       enterprise: 0,
     },

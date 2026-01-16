@@ -3,7 +3,6 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   User,
-  GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';

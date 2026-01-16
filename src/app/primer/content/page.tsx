@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export default function PrimerContentPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [hasAccess, setHasAccess] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 

@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +10,7 @@ const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/aFaaEZ9gx4nEg5B8ww';
 
 export default function PrimerCheckoutPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   useEffect(() => {
     if (status === 'unauthenticated') {

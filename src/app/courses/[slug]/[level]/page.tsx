@@ -5,14 +5,14 @@ import { getCourseBySlug } from '@/lib/db';
 export const dynamic = 'force-dynamic';
 
 interface CourseDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
     level: string;
-  };
+  }>;
 }
 
 export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
-  const { slug, level } = params;
+  const { slug, level } = await params;
 
   // Fetch course data
   const courses = await getCourseBySlug(slug);
