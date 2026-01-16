@@ -1,17 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { signUpWithEmail } from '@/lib/firebase/auth';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { user, loading } = useFirebaseUser();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard');
+    }
+  }, [loading, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,22 +39,11 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create account');
-      }
-
-      // Redirect to login page
-      router.push('/login?registered=true');
+      await signUpWithEmail(email, password, name);
+      router.push('/dashboard');
+      router.refresh();
     } catch (error: any) {
-      setError(error.message || 'An error occurred. Please try again.');
+      setError(error.message || 'Unable to create account. Please try again.');
     } finally {
       setIsLoading(false);
     }

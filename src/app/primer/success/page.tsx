@@ -1,19 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
 
 export const dynamic = 'force-dynamic';
 
 export default function PrimerSuccessPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { user, loading } = useFirebaseUser();
   const sessionId = searchParams.get('session_id');
   const [isVerifying, setIsVerifying] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login?redirect=/primer/success');
+    }
+  }, [loading, user, router]);
+
+  useEffect(() => {
     const verifyPurchase = async () => {
+      if (!user) {
+        return;
+      }
+
       if (!sessionId) {
         setError('No session ID found');
         setIsVerifying(false);
@@ -21,7 +34,12 @@ export default function PrimerSuccessPage() {
       }
 
       try {
-        const response = await fetch(`/api/primer/verify?session_id=${sessionId}`);
+        const token = await user.getIdToken();
+        const response = await fetch(`/api/primer/verify?session_id=${sessionId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = await response.json();
 
         if (!response.ok) {
@@ -37,9 +55,9 @@ export default function PrimerSuccessPage() {
     };
 
     verifyPurchase();
-  }, [sessionId]);
+  }, [sessionId, user]);
 
-  if (isVerifying) {
+  if (loading || isVerifying) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">

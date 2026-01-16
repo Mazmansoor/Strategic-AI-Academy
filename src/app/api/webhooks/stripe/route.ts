@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { stripe } from '@/lib/stripe';
+import { isStripeConfigured, stripe } from '@/lib/stripe';
 import { createEnrollment } from '@/lib/db';
 import Stripe from 'stripe';
 
@@ -8,6 +8,13 @@ export async function POST(request: NextRequest) {
   const body = await request.text();
   const headersList = await headers();
   const signature = headersList.get('stripe-signature');
+
+  if (!isStripeConfigured) {
+    return NextResponse.json(
+      { error: 'Stripe is not configured' },
+      { status: 503 }
+    );
+  }
 
   if (!signature) {
     return NextResponse.json(
@@ -18,11 +25,19 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event;
 
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    return NextResponse.json(
+      { error: 'Stripe webhook secret not configured' },
+      { status: 500 }
+    );
+  }
+
   try {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET || ''
+      webhookSecret
     );
   } catch (error: any) {
     console.error('Webhook signature verification failed:', error.message);
@@ -43,8 +58,8 @@ export async function POST(request: NextRequest) {
           if (userId && courseId && trackLevel) {
             // Create enrollment
             await createEnrollment(
-              parseInt(userId),
-              parseInt(courseId),
+              userId,
+              courseId,
               trackLevel
             );
             console.log(`Enrolled user ${userId} in course ${courseId} - ${trackLevel}`);

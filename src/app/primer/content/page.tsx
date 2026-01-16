@@ -2,34 +2,39 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase/config';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
 
 export const dynamic = 'force-dynamic';
 
 export default function PrimerContentPage() {
   const router = useRouter();
-  const { status } = useSession();
+  const { user, loading } = useFirebaseUser();
   const [hasAccess, setHasAccess] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     const checkAccess = async () => {
-      if (status === 'unauthenticated') {
+      if (!loading && !user) {
         router.push('/login?redirect=/primer/content');
         return;
       }
 
-      if (status === 'authenticated') {
+      if (user) {
         try {
-          const response = await fetch('/api/primer/access');
-          const data = await response.json();
+          const purchasesRef = collection(db, 'users', user.uid, 'primer_purchases');
+          const purchasesSnap = await getDocs(
+            query(purchasesRef, orderBy('purchasedAt', 'desc'), limit(1))
+          );
 
-          if (data.hasAccess) {
+          if (!purchasesSnap.empty) {
             setHasAccess(true);
-          } else {
-            router.push('/primer');
+            return;
           }
+
+          router.push('/primer');
         } catch (error) {
           console.error('Access check failed:', error);
           router.push('/primer');
@@ -40,9 +45,9 @@ export default function PrimerContentPage() {
     };
 
     checkAccess();
-  }, [status, router]);
+  }, [user, loading, router]);
 
-  if (isChecking || status === 'loading') {
+  if (isChecking || loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-gray-600">Verifying access...</div>

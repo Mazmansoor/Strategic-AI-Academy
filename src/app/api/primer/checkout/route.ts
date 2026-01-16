@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { stripe } from '@/lib/stripe';
+import { isStripeConfigured, stripe } from '@/lib/stripe';
+import { requireFirebaseUser } from '@/lib/firebase/server';
 
 export async function POST(_request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    if (!isStripeConfigured) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 503 }
+      );
+    }
 
-    if (!session || !session.user) {
+    const user = await requireFirebaseUser(_request);
+
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please sign in to continue.' },
         { status: 401 }
@@ -40,9 +46,9 @@ export async function POST(_request: NextRequest) {
       ],
       success_url: `${baseUrl}/primer/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/primer/checkout?canceled=true`,
-      customer_email: session.user.email || undefined,
+      customer_email: user.email || undefined,
       metadata: {
-        userId: session.user.id,
+        userId: user.uid,
         productType: 'primer',
         productName: 'Strategic AI Judgment Primer',
       },

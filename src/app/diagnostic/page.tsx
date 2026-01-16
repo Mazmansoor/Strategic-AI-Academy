@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { diagnosticQuestions } from '@/lib/constants';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
 
 export default function DiagnosticPage() {
   const router = useRouter();
+  const { user } = useFirebaseUser();
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,11 +64,18 @@ export default function DiagnosticPage() {
       };
 
       // Save to database
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (user) {
+        headers.Authorization = `Bearer ${await user.getIdToken()}`;
+      }
+
       await fetch('/api/diagnostic', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
-          email: '',
+          email: user?.email || '',
           overallScore: 0,
           level: archetype,
           domainScores: {},

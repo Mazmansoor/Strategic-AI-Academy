@@ -126,15 +126,21 @@ firebase deploy --only firestore:rules
 firebase deploy --only firestore:indexes
 ```
 
-### 5. Set Up Stripe Products
+### 5. Seed Firestore Data
 
-Create products in Stripe Dashboard:
+```bash
+npm run seed:firestore
+```
+
+### 6. Set Up Stripe Products (Optional)
+
+Create products in Stripe Dashboard and set `STRIPE_ENABLED=true`:
 - Basic Monthly/Yearly
 - Pro Monthly/Yearly
 - Team per-seat pricing
 - Enterprise custom pricing
 
-### 6. Run Development Server
+### 7. Run Development Server
 
 ```bash
 npm run dev
@@ -142,7 +148,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000)
 
-### 7. Run Firebase Emulators (Optional)
+### 8. Run Firebase Emulators (Optional)
 
 ```bash
 npm run firebase:emulators
@@ -171,7 +177,7 @@ nextjs-app/
 │   ├── components/            # React components
 │   ├── lib/                   # Utilities
 │   │   ├── db/               # Database functions
-│   │   ├── auth.ts           # NextAuth config
+│   │   ├── firebase/auth.ts   # Firebase auth helpers
 │   │   └── stripe.ts         # Stripe config
 │   └── types/                 # TypeScript types
 ├── public/                    # Static files
@@ -183,24 +189,22 @@ nextjs-app/
 - ✅ Next.js 14 with App Router
 - ✅ TypeScript
 - ✅ Tailwind CSS
-- ✅ Vercel Postgres Database
-- ✅ NextAuth.js Authentication
+- ✅ Firebase Firestore Database
+- ✅ Firebase Authentication
 - ✅ Stripe Payment Integration
 - ✅ Course Progress Tracking
 - ✅ Diagnostic Assessment
 - ✅ User Dashboard
 
-## 📊 Database Schema
+## 📊 Firestore Collections
 
-### Tables:
-- `users` - User accounts
-- `diagnostic_results` - Quiz results
-- `courses` - Course information
-- `course_tracks` - Individual course levels
-- `enrollments` - User course enrollments
-- `user_progress` - Module completion tracking
-- `subscriptions` - Stripe subscriptions
-- `payments` - Payment records
+### Collections:
+- `users` - User profiles and subcollections (enrollments, progress, diagnostics, primer_purchases)
+- `courses` - Course catalog with track metadata
+- `learning_paths` - Curated learning sequences
+- `pricing_plans` - Display plans and features
+- `diagnostic_questions` - Diagnostic assessment bank
+
 
 ## 🌐 Deployment
 
@@ -232,15 +236,15 @@ export async function GET() {
 
 ### Protected Routes
 
-Use NextAuth session in server components:
+Use Firebase Auth state in client components:
 
 ```typescript
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
+import { useRouter } from 'next/navigation';
 
-const session = await getServerSession(authOptions);
-if (!session) {
-  redirect('/login');
+const { user, loading } = useFirebaseUser();
+if (!loading && !user) {
+  router.push('/login');
 }
 ```
 
@@ -287,13 +291,12 @@ npm run format:check
 ### Common Issues
 
 **Database Connection Errors**
-- Verify your `POSTGRES_URL` is correct in `.env.local`
-- Check if the database is accessible from your network
-- Ensure database tables are created (run schema.sql)
+- Verify your Firebase Admin credentials in `.env.local`
+- Ensure your service account has Firestore access
 
-**NextAuth Session Issues**
-- Generate a new `NEXTAUTH_SECRET` using `openssl rand -base64 32`
-- Ensure `NEXTAUTH_URL` matches your app URL
+**Firebase Auth Issues**
+- Verify your Firebase client config values in `.env.local`
+- Ensure your Firebase project allows email/password or Google sign-in
 
 **Stripe Webhook Failures**
 - For local development, use Stripe CLI: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`

@@ -32,7 +32,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
 
   const isFree = track.price_cents === 0;
   const priceDisplay = isFree
-    ? 'Foundation (Free)'
+    ? 'Free'
     : `$${(track.price_cents / 100).toFixed(0)}`;
 
   return (

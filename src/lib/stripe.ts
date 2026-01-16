@@ -1,9 +1,10 @@
 import Stripe from 'stripe';
 
-// Use a placeholder during build time if env var is not set
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder';
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeEnabled = process.env.STRIPE_ENABLED === 'true';
+export const isStripeConfigured = stripeEnabled && Boolean(stripeSecretKey);
 
-export const stripe = new Stripe(stripeSecretKey, {
+export const stripe = new Stripe(stripeSecretKey || 'sk_test_placeholder', {
   apiVersion: '2025-02-24.acacia',
   typescript: true,
 });
@@ -20,7 +21,7 @@ export const PRICE_IDS = {
 export async function createCheckoutSession(params: {
   priceId: string;
   userId: string;
-  courseId: number;
+  courseId: string;
   trackLevel: string;
   successUrl: string;
   cancelUrl: string;
@@ -38,7 +39,7 @@ export async function createCheckoutSession(params: {
     cancel_url: params.cancelUrl,
     metadata: {
       userId: params.userId,
-      courseId: params.courseId.toString(),
+      courseId: params.courseId,
       trackLevel: params.trackLevel,
     },
   });

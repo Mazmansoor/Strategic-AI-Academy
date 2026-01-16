@@ -83,6 +83,24 @@ service cloud.firestore {
       }
     }
 
+    // Learning paths (public read)
+    match /learning_paths/{pathId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Pricing plans (public read)
+    match /pricing_plans/{planId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Diagnostic questions (public read)
+    match /diagnostic_questions/{questionId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Subscriptions collection
     match /subscriptions/{subscriptionId} {
       allow read: if isSignedIn() && resource.data.userId == request.auth.uid;

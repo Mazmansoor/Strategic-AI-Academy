@@ -1,34 +1,64 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
 
 export const dynamic = 'force-dynamic';
 
-const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/aFaaEZ9gx4nEg5B8ww';
-
 export default function PrimerCheckoutPage() {
   const router = useRouter();
-  const { status } = useSession();
+  const { user, loading } = useFirebaseUser();
+  const [message, setMessage] = useState('Loading...');
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!loading && !user) {
       router.push('/login?redirect=/primer/checkout');
-    } else if (status === 'authenticated') {
-      // Redirect directly to Stripe Payment Link
-      window.location.href = STRIPE_PAYMENT_LINK;
     }
-  }, [status, router]);
+  }, [loading, user, router]);
 
-  // Show loading state while checking authentication or redirecting
+  useEffect(() => {
+    const startCheckout = async () => {
+      if (!user) {
+        return;
+      }
+
+      setMessage('Creating secure checkout...');
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch('/api/primer/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to start checkout');
+        }
+
+        if (data.url) {
+          window.location.href = data.url;
+          return;
+        }
+
+        setMessage('Checkout link not available.');
+      } catch (error) {
+        console.error('Checkout error:', error);
+        setMessage('Checkout is not available right now. Please try again later.');
+      }
+    };
+
+    startCheckout();
+  }, [user]);
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-center">
         <div className="text-gray-600 mb-4">
-          {status === 'loading' && 'Loading...'}
-          {status === 'unauthenticated' && 'Redirecting to login...'}
-          {status === 'authenticated' && 'Redirecting to checkout...'}
+          {message}
         </div>
         <p className="text-sm text-gray-400">You will be redirected in a moment</p>
       </div>

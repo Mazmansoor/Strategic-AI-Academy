@@ -1,34 +1,71 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { createCheckoutSession } from '@/lib/stripe';
+import { createCheckoutSession, isStripeConfigured } from '@/lib/stripe';
+import { requireFirebaseUser } from '@/lib/firebase/server';
+import { adminDb } from '@/lib/firebase/admin';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    if (!isStripeConfigured) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 503 }
+      );
+    }
 
-    if (!session || !session.user) {
+    const user = await requireFirebaseUser(request);
+
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const { priceId, courseId, trackLevel } = await request.json();
+    const { courseId, trackLevel } = await request.json();
 
-    if (!priceId || !courseId || !trackLevel) {
+    if (!courseId || !trackLevel) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
+    const courseIdValue = String(courseId);
+    const courseSnap = await adminDb.collection('courses').doc(courseIdValue).get();
+    if (!courseSnap.exists) {
+      return NextResponse.json(
+        { error: 'Course not found' },
+        { status: 404 }
+      );
+    }
+
+    const courseData = courseSnap.data() as {
+      tracks?: Array<{ level: string; priceId?: string }>;
+    };
+    const track = courseData.tracks?.find(
+      (item) => item.level.toLowerCase() === String(trackLevel).toLowerCase()
+    );
+
+    if (!track) {
+      return NextResponse.json(
+        { error: 'Track not found' },
+        { status: 404 }
+      );
+    }
+
+    if (!track.priceId) {
+      return NextResponse.json(
+        { error: 'Pricing not configured for this track' },
+        { status: 503 }
+      );
+    }
+
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
     const checkoutSession = await createCheckoutSession({
-      priceId,
-      userId: session.user.id,
-      courseId,
+      priceId: track.priceId,
+      userId: user.uid,
+      courseId: courseIdValue,
       trackLevel,
       successUrl: `${baseUrl}/dashboard?success=true`,
       cancelUrl: `${baseUrl}/courses?canceled=true`,

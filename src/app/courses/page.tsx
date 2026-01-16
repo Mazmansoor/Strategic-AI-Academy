@@ -69,7 +69,7 @@ export default async function CoursesPage() {
               <div className="space-y-6">
                 {course.tracks && course.tracks.map((track: any) => {
                   const priceDisplay = track.price_cents === 0
-                    ? 'Foundation'
+                    ? 'Free'
                     : `$${(track.price_cents / 100).toFixed(0)}`;
 
                   return (

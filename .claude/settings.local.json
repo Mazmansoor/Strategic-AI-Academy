@@ -6,7 +6,10 @@
       "Bash(powershell:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(gcloud run deploy:*)",
+      "Bash(npx rimraf node_modules .next)",
+      "Bash(npm ci:*)"
     ]
   }
 }

@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { saveDiagnosticResult } from '@/lib/db';
+import { requireFirebaseUser } from '@/lib/firebase/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const user = await requireFirebaseUser(request);
     const { email, domainScores, overallScore, level, recommendations } = await request.json();
 
     // Save diagnostic result
     const result = await saveDiagnosticResult({
-      userId: session?.user?.id ? parseInt(session.user.id) : undefined,
-      email: email || session?.user?.email || '',
+      userId: user?.uid,
+      email: email || user?.email || '',
       overallScore,
       level,
       domainScores,

@@ -1,166 +1,214 @@
-import { sql } from '@vercel/postgres';
+import { adminDb } from '@/lib/firebase/admin';
+import { Timestamp } from 'firebase-admin/firestore';
 
-export { sql };
+type CourseTrack = {
+  level: string;
+  duration: string;
+  modules: number;
+  priceCents: number;
+  locked: boolean;
+  priceId?: string;
+};
 
-// Database helper functions
-export async function query(text: string, params?: any[]) {
-  try {
-    const result = await sql.query(text, params);
-    return result;
-  } catch (error) {
-    console.error('Database query error:', error);
-    throw error;
+type CourseDoc = {
+  slug: string;
+  domain: string;
+  title?: string;
+  description?: string;
+  tracks?: CourseTrack[];
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+};
+
+const formatTrack = (track: CourseTrack, courseId: string) => ({
+  id: `${courseId}-${track.level}`,
+  level: track.level,
+  duration: track.duration,
+  modules: track.modules,
+  price_cents: track.priceCents,
+  locked: track.locked,
+  price_id: track.priceId || '',
+});
+
+const formatCourse = (docId: string, data: CourseDoc) => ({
+  id: docId,
+  slug: data.slug || docId,
+  domain: data.domain,
+  description: data.description || '',
+  tracks: (data.tracks || []).map((track) => formatTrack(track, docId)),
+});
+
+export async function getAllCourses() {
+  const snapshot = await adminDb.collection('courses').get();
+  return snapshot.docs.map((doc) => formatCourse(doc.id, doc.data() as CourseDoc));
+}
+
+export async function getCourseBySlug(slug: string) {
+  const courseRef = adminDb.collection('courses').doc(slug);
+  const courseSnap = await courseRef.get();
+  if (!courseSnap.exists) {
+    return [];
   }
+  return [formatCourse(courseSnap.id, courseSnap.data() as CourseDoc)];
 }
 
-// User queries
-export async function getUserByEmail(email: string) {
-  const result = await sql`
-    SELECT * FROM users WHERE email = ${email} LIMIT 1
-  `;
-  return result.rows[0];
+export async function getUserEnrollments(userId: string) {
+  const enrollmentsRef = adminDb
+    .collection('users')
+    .doc(userId)
+    .collection('enrollments');
+  const enrollmentsSnap = await enrollmentsRef.orderBy('enrolledAt', 'desc').get();
+
+  if (enrollmentsSnap.empty) {
+    return [];
+  }
+
+  const enrollmentDocs = enrollmentsSnap.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as {
+      courseId: string;
+      trackLevel: string;
+      status: string;
+      enrolledAt: Timestamp;
+    }),
+  }));
+
+  const uniqueCourseIds = Array.from(
+    new Set(enrollmentDocs.map((enrollment) => enrollment.courseId))
+  );
+
+  const courseSnapshots = await Promise.all(
+    uniqueCourseIds.map((courseId) => adminDb.collection('courses').doc(courseId).get())
+  );
+
+  const courseMap = new Map(
+    courseSnapshots
+      .filter((snap) => snap.exists)
+      .map((snap) => [snap.id, snap.data() as CourseDoc])
+  );
+
+  return enrollmentDocs.map((enrollment) => {
+    const course = courseMap.get(enrollment.courseId);
+    return {
+      id: enrollment.id,
+      course_id: enrollment.courseId,
+      track_level: enrollment.trackLevel,
+      status: enrollment.status,
+      enrolled_at: enrollment.enrolledAt?.toDate(),
+      domain: course?.domain || '',
+      slug: course?.slug || enrollment.courseId,
+    };
+  });
 }
 
-export async function createUser(email: string, name: string, passwordHash: string) {
-  const result = await sql`
-    INSERT INTO users (email, name, password_hash)
-    VALUES (${email}, ${name}, ${passwordHash})
-    RETURNING *
-  `;
-  return result.rows[0];
+export async function createEnrollment(userId: string, courseId: string, trackLevel: string) {
+  const enrollmentRef = adminDb
+    .collection('users')
+    .doc(userId)
+    .collection('enrollments')
+    .doc(`${courseId}-${trackLevel}`);
+
+  await enrollmentRef.set(
+    {
+      courseId,
+      trackLevel,
+      status: 'active',
+      enrolledAt: Timestamp.now(),
+    },
+    { merge: true }
+  );
+
+  const enrollmentSnap = await enrollmentRef.get();
+  return {
+    id: enrollmentSnap.id,
+    ...enrollmentSnap.data(),
+  };
 }
 
-// Diagnostic queries
 export async function saveDiagnosticResult(data: {
-  userId?: number;
+  userId?: string;
   email: string;
   overallScore: number;
   level: string;
   domainScores: Record<string, number>;
   recommendations: string[];
 }) {
-  const result = await sql`
-    INSERT INTO diagnostic_results (user_id, email, overall_score, level, domain_scores, recommendations)
-    VALUES (
-      ${data.userId || null},
-      ${data.email},
-      ${data.overallScore},
-      ${data.level},
-      ${JSON.stringify(data.domainScores)},
-      ${JSON.stringify(data.recommendations)}
-    )
-    RETURNING *
-  `;
-  return result.rows[0];
+  const payload = {
+    userId: data.userId || null,
+    email: data.email || '',
+    overallScore: data.overallScore,
+    level: data.level,
+    domainScores: data.domainScores,
+    recommendations: data.recommendations,
+    completedAt: Timestamp.now(),
+  };
+
+  if (data.userId) {
+    const docRef = await adminDb
+      .collection('users')
+      .doc(data.userId)
+      .collection('diagnostics')
+      .add(payload);
+    return { id: docRef.id, ...payload };
+  }
+
+  const docRef = await adminDb.collection('diagnostics').add(payload);
+  return { id: docRef.id, ...payload };
 }
 
-// Course queries
-export async function getAllCourses() {
-  const result = await sql`
-    SELECT c.*,
-           json_agg(
-             json_build_object(
-               'id', ct.id,
-               'level', ct.level,
-               'duration', ct.duration,
-               'modules', ct.modules,
-               'price_cents', ct.price_cents,
-               'locked', ct.locked
-             ) ORDER BY
-               CASE ct.level
-                 WHEN 'Foundation' THEN 1
-                 WHEN 'Application' THEN 2
-                 WHEN 'Systems' THEN 3
-                 WHEN 'Mastery' THEN 4
-               END
-           ) as tracks
-    FROM courses c
-    LEFT JOIN course_tracks ct ON c.id = ct.course_id
-    GROUP BY c.id
-    ORDER BY c.id
-  `;
-  return result.rows;
-}
+export async function getUserProgress(userId: string, courseId: string, trackLevel: string) {
+  const progressRef = adminDb
+    .collection('users')
+    .doc(userId)
+    .collection('progress');
+  const snapshot = await progressRef
+    .where('courseId', '==', courseId)
+    .where('trackLevel', '==', trackLevel)
+    .orderBy('moduleNumber', 'asc')
+    .get();
 
-export async function getCourseBySlug(slug: string) {
-  const result = await sql`
-    SELECT c.*,
-           json_agg(
-             json_build_object(
-               'id', ct.id,
-               'level', ct.level,
-               'duration', ct.duration,
-               'modules', ct.modules,
-               'price_cents', ct.price_cents,
-               'locked', ct.locked
-             ) ORDER BY
-               CASE ct.level
-                 WHEN 'Foundation' THEN 1
-                 WHEN 'Application' THEN 2
-                 WHEN 'Systems' THEN 3
-                 WHEN 'Mastery' THEN 4
-               END
-           ) as tracks
-    FROM courses c
-    LEFT JOIN course_tracks ct ON c.id = ct.course_id
-    WHERE c.slug = ${slug}
-    GROUP BY c.id
-  `;
-  return result.rows;
-}
-
-// Enrollment queries
-export async function getUserEnrollments(userId: number) {
-  const result = await sql`
-    SELECT e.*, c.domain, c.slug, ct.duration, ct.modules
-    FROM enrollments e
-    JOIN courses c ON e.course_id = c.id
-    JOIN course_tracks ct ON c.id = ct.course_id AND e.track_level = ct.level
-    WHERE e.user_id = ${userId}
-    AND e.status = 'active'
-    ORDER BY e.enrolled_at DESC
-  `;
-  return result.rows;
-}
-
-export async function createEnrollment(userId: number, courseId: number, trackLevel: string) {
-  const result = await sql`
-    INSERT INTO enrollments (user_id, course_id, track_level, status)
-    VALUES (${userId}, ${courseId}, ${trackLevel}, 'active')
-    ON CONFLICT (user_id, course_id, track_level)
-    DO UPDATE SET status = 'active'
-    RETURNING *
-  `;
-  return result.rows[0];
-}
-
-// Progress queries
-export async function getUserProgress(userId: number, courseId: number, trackLevel: string) {
-  const result = await sql`
-    SELECT * FROM user_progress
-    WHERE user_id = ${userId}
-    AND course_id = ${courseId}
-    AND track_level = ${trackLevel}
-    ORDER BY module_number
-  `;
-  return result.rows;
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as {
+      courseId: string;
+      trackLevel: string;
+      moduleNumber: number;
+      completed: boolean;
+      completedAt?: Timestamp;
+    }),
+  }));
 }
 
 export async function updateModuleProgress(
-  userId: number,
-  courseId: number,
+  userId: string,
+  courseId: string,
   trackLevel: string,
   moduleNumber: number,
   completed: boolean
 ) {
-  const completedAt = completed ? new Date().toISOString() : null;
+  const progressRef = adminDb
+    .collection('users')
+    .doc(userId)
+    .collection('progress')
+    .doc(`${courseId}-${trackLevel}-${moduleNumber}`);
 
-  const result = await sql`
-    INSERT INTO user_progress (user_id, course_id, track_level, module_number, completed, completed_at)
-    VALUES (${userId}, ${courseId}, ${trackLevel}, ${moduleNumber}, ${completed}, ${completedAt})
-    ON CONFLICT (user_id, course_id, track_level, module_number)
-    DO UPDATE SET completed = ${completed}, completed_at = ${completedAt}
-    RETURNING *
-  `;
-  return result.rows[0];
+  const completedAt = completed ? Timestamp.now() : null;
+
+  await progressRef.set(
+    {
+      courseId,
+      trackLevel,
+      moduleNumber,
+      completed,
+      completedAt,
+      lastAccessedAt: Timestamp.now(),
+    },
+    { merge: true }
+  );
+
+  const progressSnap = await progressRef.get();
+  return {
+    id: progressSnap.id,
+    ...progressSnap.data(),
+  };
 }

@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { stripe } from '@/lib/stripe';
-import { sql } from '@vercel/postgres';
+import { isStripeConfigured, stripe } from '@/lib/stripe';
+import { requireFirebaseUser } from '@/lib/firebase/server';
+import { adminDb } from '@/lib/firebase/admin';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    if (!isStripeConfigured) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 503 }
+      );
+    }
 
-    if (!session || !session.user) {
+    const user = await requireFirebaseUser(request);
+
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -35,31 +42,35 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Check if this purchase has already been recorded
-    const existingPurchase = await sql`
-      SELECT id FROM primer_purchases
-      WHERE user_id = ${parseInt(session.user.id)}
-      AND stripe_session_id = ${sessionId}
-      LIMIT 1
-    `;
+    const metadataUserId = checkoutSession.metadata?.userId;
+    const emailMatches =
+      checkoutSession.customer_email &&
+      user.email &&
+      checkoutSession.customer_email.toLowerCase() === user.email.toLowerCase();
 
-    if (existingPurchase.rows.length === 0) {
-      // Record the purchase in the database
-      await sql`
-        INSERT INTO primer_purchases (
-          user_id,
-          stripe_session_id,
-          stripe_payment_intent,
-          amount_cents,
-          purchased_at
-        ) VALUES (
-          ${parseInt(session.user.id)},
-          ${sessionId},
-          ${checkoutSession.payment_intent as string || null},
-          ${checkoutSession.amount_total || 14700},
-          NOW()
-        )
-      `;
+    if (metadataUserId && metadataUserId !== user.uid && !emailMatches) {
+      return NextResponse.json(
+        { error: 'Session does not match authenticated user' },
+        { status: 403 }
+      );
+    }
+
+    const purchaseRef = adminDb
+      .collection('users')
+      .doc(user.uid)
+      .collection('primer_purchases')
+      .doc(sessionId);
+    const existingPurchase = await purchaseRef.get();
+
+    if (!existingPurchase.exists) {
+      await purchaseRef.set({
+        stripeSessionId: sessionId,
+        stripePaymentIntent: checkoutSession.payment_intent || null,
+        amountCents: checkoutSession.amount_total || 14700,
+        currency: checkoutSession.currency || 'usd',
+        status: checkoutSession.payment_status,
+        purchasedAt: Timestamp.now(),
+      });
     }
 
     return NextResponse.json({

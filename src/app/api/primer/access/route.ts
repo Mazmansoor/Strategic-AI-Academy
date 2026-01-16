@@ -1,44 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { sql } from '@vercel/postgres';
+import { requireFirebaseUser } from '@/lib/firebase/server';
+import { adminDb } from '@/lib/firebase/admin';
 
 export async function GET(_request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const user = await requireFirebaseUser(_request);
 
-    if (!session || !session.user) {
+    if (!user) {
       return NextResponse.json(
         { hasAccess: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    // Check if user has purchased the primer
-    const purchase = await sql`
-      SELECT id, purchased_at
-      FROM primer_purchases
-      WHERE user_id = ${parseInt(session.user.id)}
-      ORDER BY purchased_at DESC
-      LIMIT 1
-    `;
+    const purchaseSnap = await adminDb
+      .collection('users')
+      .doc(user.uid)
+      .collection('primer_purchases')
+      .orderBy('purchasedAt', 'desc')
+      .limit(1)
+      .get();
 
-    const hasAccess = purchase.rows.length > 0;
+    const hasAccess = !purchaseSnap.empty;
+    const purchaseDoc = purchaseSnap.docs[0];
 
     return NextResponse.json({
       hasAccess,
-      purchaseDate: hasAccess ? purchase.rows[0].purchased_at : null
+      purchaseDate: hasAccess ? purchaseDoc.data().purchasedAt?.toDate() : null
     });
   } catch (error: any) {
     console.error('Access check error:', error);
-
-    // If table doesn't exist yet, return no access (graceful degradation)
-    if (error.message?.includes('relation "primer_purchases" does not exist')) {
-      return NextResponse.json({
-        hasAccess: false,
-        error: 'Database not initialized'
-      });
-    }
 
     return NextResponse.json(
       { hasAccess: false, error: error.message || 'Failed to check access' },

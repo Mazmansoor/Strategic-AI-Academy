@@ -1,31 +1,98 @@
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { authOptions } from '@/lib/auth';
-import { getUserEnrollments } from '@/lib/db';
-import { sql } from '@vercel/postgres';
+import { useRouter } from 'next/navigation';
+import { collection, doc, getDoc, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase/config';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
 
-export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+type EnrollmentView = {
+  id: string;
+  courseId: string;
+  trackLevel: string;
+  domain: string;
+  slug: string;
+};
 
-  if (!session || !session.user) {
-    redirect('/login');
+export default function DashboardPage() {
+  const router = useRouter();
+  const { user, loading } = useFirebaseUser();
+  const [enrollments, setEnrollments] = useState<EnrollmentView[]>([]);
+  const [hasPrimerAccess, setHasPrimerAccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login?redirect=/dashboard');
+    }
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      if (!user) {
+        return;
+      }
+
+      try {
+        const enrollmentsRef = collection(db, 'users', user.uid, 'enrollments');
+        const enrollmentsSnap = await getDocs(query(enrollmentsRef, orderBy('enrolledAt', 'desc')));
+
+        const enrollmentDocs = enrollmentsSnap.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...(docSnap.data() as { courseId: string; trackLevel: string }),
+        }));
+
+        const courseIds = Array.from(
+          new Set(enrollmentDocs.map((enrollment) => enrollment.courseId))
+        );
+
+        const courseSnaps = await Promise.all(
+          courseIds.map((courseId) => getDoc(doc(db, 'courses', courseId)))
+        );
+
+        const courseMap = new Map(
+          courseSnaps
+            .filter((snap) => snap.exists())
+            .map((snap) => [snap.id, snap.data() as { domain?: string; slug?: string }])
+        );
+
+        const formattedEnrollments = enrollmentDocs.map((enrollment) => {
+          const course = courseMap.get(enrollment.courseId);
+          return {
+            id: enrollment.id,
+            courseId: enrollment.courseId,
+            trackLevel: enrollment.trackLevel,
+            domain: course?.domain || '',
+            slug: course?.slug || enrollment.courseId,
+          };
+        });
+
+        const primerRef = collection(db, 'users', user.uid, 'primer_purchases');
+        const primerSnap = await getDocs(query(primerRef, orderBy('purchasedAt', 'desc'), limit(1)));
+
+        setEnrollments(formattedEnrollments);
+        setHasPrimerAccess(!primerSnap.empty);
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadDashboard();
+  }, [user]);
+
+  if (loading || isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-gray-600">Loading your dashboard...</div>
+      </div>
+    );
   }
 
-  const enrollments = await getUserEnrollments(parseInt(session.user.id));
-
-  // Check if user has purchased the primer
-  let hasPrimerAccess = false;
-  try {
-    const primerCheck = await sql`
-      SELECT id FROM primer_purchases
-      WHERE user_id = ${parseInt(session.user.id)}
-      LIMIT 1
-    `;
-    hasPrimerAccess = primerCheck.rows.length > 0;
-  } catch (error) {
-    // Gracefully handle if table doesn't exist yet
-    console.error('Primer access check failed:', error);
+  if (!user) {
+    return null;
   }
 
   return (
@@ -61,7 +128,7 @@ export default async function DashboardPage() {
         {/* Welcome Section */}
         <div className="mb-24">
           <h1 className="text-4xl font-light text-gray-900 mb-4">
-            {session.user.name?.split(' ')[0] || session.user.email}
+            {user.displayName?.split(' ')[0] || user.email}
           </h1>
           <p className="text-gray-600">
             Your enrolled capabilities
@@ -75,7 +142,7 @@ export default async function DashboardPage() {
             <div className="border-t border-gray-200 pt-8">
               <div className="mb-6">
                 <h3 className="text-2xl font-light text-gray-900 mb-2">Strategic AI Judgment Primer</h3>
-                <p className="text-sm text-gray-500">90-minute deep dive · Lifetime access</p>
+                <p className="text-sm text-gray-500">90-minute deep dive Aú Lifetime access</p>
               </div>
               <Link
                 href="/primer/content"
@@ -90,14 +157,14 @@ export default async function DashboardPage() {
         {/* Enrolled Capabilities */}
         <div className="space-y-12">
           {enrollments.length > 0 ? (
-            enrollments.map((enrollment: any) => (
+            enrollments.map((enrollment) => (
               <div key={enrollment.id} className="border-t border-gray-200 pt-8">
                 <div className="mb-6">
                   <h2 className="text-2xl font-light text-gray-900 mb-2">{enrollment.domain}</h2>
-                  <p className="text-sm text-gray-500">{enrollment.track_level}</p>
+                  <p className="text-sm text-gray-500">{enrollment.trackLevel}</p>
                 </div>
                 <Link
-                  href={`/courses/${enrollment.slug}/${enrollment.track_level.toLowerCase()}`}
+                  href={`/courses/${enrollment.slug}/${enrollment.trackLevel.toLowerCase()}`}
                   className="inline-block text-sm text-gray-900 border-b border-gray-900 hover:border-gray-400 transition-colors"
                 >
                   Continue

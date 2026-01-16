@@ -1,16 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+import { signInWithEmail, signInWithGoogle } from '@/lib/firebase/auth';
+import { useFirebaseUser } from '@/lib/firebase/hooks';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { user, loading } = useFirebaseUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard');
+    }
+  }, [loading, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,20 +26,25 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        router.push('/dashboard');
-        router.refresh();
-      }
+      await signInWithEmail(email, password);
+      router.push('/dashboard');
+      router.refresh();
     } catch (error) {
-      setError('An error occurred. Please try again.');
+      setError('Invalid email or password.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setIsLoading(true);
+    try {
+      await signInWithGoogle();
+      router.push('/dashboard');
+      router.refresh();
+    } catch (error) {
+      setError('Unable to sign in with Google.');
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +106,17 @@ export default function LoginPage() {
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+            className="w-full border border-gray-900 text-gray-900 py-3 hover:bg-gray-100 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Continue with Google
+          </button>
+        </div>
 
         <div className="mt-8 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-600">

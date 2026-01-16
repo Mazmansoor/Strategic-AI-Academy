@@ -13,9 +13,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Set minimal env vars to allow build to complete
-ENV POSTGRES_URL="postgresql://placeholder"
-ENV NEXTAUTH_SECRET="build-placeholder"
-ENV NEXTAUTH_URL="http://localhost:3000"
+# Firebase and other required build-time variables will be injected at runtime
+ENV NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
 RUN npm run build
 
