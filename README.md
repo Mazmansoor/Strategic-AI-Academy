@@ -1,12 +1,88 @@
-# Zavia Strategic AI Academy - Next.js Full-Stack Platform
+# Zavia AI Academy - The Complete AI Reskilling Platform
 
-🎓 **Complete learning management system with:**
-- ✅ User authentication (NextAuth.js)
-- ✅ PostgreSQL database (Vercel Postgres)
-- ✅ Payment processing (Stripe)
-- ✅ Course enrollment & progress tracking
-- ✅ Diagnostic assessment with radar chart visualization
-- ✅ Responsive UI (Tailwind CSS + Lucide icons)
+![Next.js](https://img.shields.io/badge/Next.js-15.1-black?style=flat&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?style=flat&logo=typescript)
+![Firebase](https://img.shields.io/badge/Firebase-11.1-orange?style=flat&logo=firebase)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+## 🚀 **The Only Platform That Takes You From Python to the C-Suite**
+
+Zavia AI Academy is a comprehensive learning management platform designed for both **B2C professionals** and **B2B enterprise teams**. We offer the complete journey: from foundational programming to strategic executive leadership in the AI era.
+
+### **Why Zavia?**
+- **Full Spectrum**: 18 courses covering Technical → Business → Strategic skills
+- **Career Transformation**: From zero coding to AI strategy leadership
+- **B2C + B2B Ready**: Individual subscriptions + Team management
+- **Premium Quality**: Mentorship, certificates, career coaching
+- **Modern Stack**: Firebase + Next.js + Stripe for scalability
+
+---
+
+## 🎯 **Platform Features**
+
+### Core Capabilities
+- ✅ **Firebase Authentication** - Google Sign-In, seamless auth
+- ✅ **Cloud Firestore** - Real-time, scalable NoSQL database
+- ✅ **Stripe Payments** - Tiered subscriptions (Basic, Pro, Enterprise, Team)
+- ✅ **Course Management** - 18 courses from Python to Executive Leadership
+- ✅ **Team Features** - Admin dashboards, member management, analytics
+- ✅ **Progress Tracking** - Individual and team-level analytics
+- ✅ **Diagnostic Assessment** - Skill-level evaluation with radar charts
+- ✅ **Responsive UI** - Tailwind CSS + Lucide icons
+- ✅ **Docker Support** - Containerized deployment ready
+
+### Advanced Features
+- 🔥 Real-time progress sync across devices
+- 📊 Team analytics & reporting
+- 🎓 Certificate generation
+- 💬 Community forums
+- 🎯 Personalized learning paths
+- 📱 Mobile-responsive design
+
+## 📚 **Course Catalog**
+
+### Technical Foundation Track
+1. **Python Fundamentals** (Beginner, 6 weeks)
+2. **Advanced Python & OOP** (Intermediate, 8 weeks)
+3. **SQL & Database Design** (Beginner, 6 weeks)
+4. **Data Science with Python** (Intermediate, 10 weeks)
+5. **Machine Learning Fundamentals** (Intermediate, 12 weeks)
+6. **Deep Learning & Neural Networks** (Advanced, 14 weeks)
+7. **LLMs & Prompt Engineering** (Intermediate, 8 weeks)
+8. **Agentic AI & RAG Systems** (Advanced, 10 weeks)
+9. **MLOps & Production ML** (Advanced, 10 weeks)
+
+### Business & Strategy Track
+10. **Data-Driven Decision Making** (Intermediate, 8 weeks)
+11. **Product Management for AI** (Intermediate, 10 weeks)
+12. **AI Strategy & Transformation** (Advanced, 12 weeks)
+13. **Strategic Thinking & Planning** (Advanced, 10 weeks)
+14. **Executive Leadership in the AI Era** (Expert, 12 weeks)
+
+### Specialty Tracks
+15. **Cloud Architecture (AWS/GCP/Azure)** (Intermediate, 12 weeks)
+16. **DevOps & CI/CD** (Intermediate, 10 weeks)
+17. **Cybersecurity Essentials** (Intermediate, 8 weeks)
+
+**Total**: 18 courses, 170+ weeks of content
+
+---
+
+## 💰 **Pricing**
+
+### B2C (Individuals)
+- **Free**: 3 beginner courses, community access
+- **Basic**: $29/month - All 18 courses
+- **Pro**: $99/month - Basic + mentorship, certificates, career coaching
+- **Enterprise**: $199/month - Pro + unlimited mentorship
+
+### B2B (Teams)
+- **Team**: $49/user/month (min 5 seats) - All Pro features + team dashboard
+- **Enterprise**: Custom - SSO, LMS integration, custom content
+
+See [PRICING_STRATEGY.md](PRICING_STRATEGY.md) for full details.
+
+---
 
 ## 🚀 Quick Start
 
@@ -16,66 +92,70 @@
 npm install
 ```
 
-### 2. Set Up Environment Variables
+### 2. Set Up Firebase Project
 
-Copy `.env.example` to `.env.local`:
+```bash
+# Install Firebase CLI globally
+npm install -g firebase-tools
+
+# Login to Firebase
+firebase login
+
+# Initialize Firebase
+firebase init
+# Select: Firestore, Storage, Hosting (optional)
+```
+
+### 3. Configure Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in:
 
 ```bash
 cp .env.example .env.local
 ```
 
-### 3. Set Up Vercel Postgres Database
+Required variables:
+- Firebase credentials (from Firebase Console)
+- Stripe API keys (from Stripe Dashboard)
+- Firebase Admin credentials (service account JSON)
 
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Select your project or create a new one
-3. Go to Storage tab
-4. Create a new Postgres database
-5. Copy the connection strings to your `.env.local`
-
-### 4. Initialize Database
-
-Run the schema and seed files:
+### 4. Deploy Firestore Rules & Indexes
 
 ```bash
-# You can run these in Vercel Postgres Query Editor
-# Or use the Vercel CLI:
-vercel env pull .env.local
+firebase deploy --only firestore:rules
+firebase deploy --only firestore:indexes
 ```
 
-Then execute the SQL files:
-- `src/lib/db/schema.sql` - Creates tables
-- `src/lib/db/seed.sql` - Populates initial data
+### 5. Set Up Stripe Products
 
-### 5. Configure NextAuth
+Create products in Stripe Dashboard:
+- Basic Monthly/Yearly
+- Pro Monthly/Yearly
+- Team per-seat pricing
+- Enterprise custom pricing
 
-Generate a secret for NextAuth:
-
-```bash
-openssl rand -base64 32
-```
-
-Add it to `.env.local`:
-```
-NEXTAUTH_SECRET=your_generated_secret
-```
-
-### 6. Set Up Stripe
-
-1. Go to [Stripe Dashboard](https://dashboard.stripe.com/)
-2. Get your API keys from Developers → API keys
-3. Add to `.env.local`:
-   ```
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-   STRIPE_SECRET_KEY=sk_test_...
-   ```
-
-### 7. Run Development Server
+### 6. Run Development Server
 
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
+
+### 7. Run Firebase Emulators (Optional)
+
+```bash
+npm run firebase:emulators
+```
+
+---
+
+## 📖 **Documentation**
+
+- [Firebase Migration Guide](FIREBASE_MIGRATION.md) - Detailed migration steps
+- [Pricing Strategy](PRICING_STRATEGY.md) - B2C & B2B pricing breakdown
+- [Deployment Guide](DEPLOYMENT.md) - Production deployment
+- [API Documentation](API_DOCS.md) - API endpoints (coming soon)
 
 ## 📁 Project Structure
 
@@ -166,15 +246,68 @@ if (!session) {
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 14
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: Vercel Postgres
-- **Auth**: NextAuth.js
-- **Payments**: Stripe
-- **Charts**: Recharts
-- **Deployment**: Vercel
+- **Framework**: Next.js 15.1
+- **Language**: TypeScript 5.7
+- **Styling**: Tailwind CSS 3.4
+- **Database**: Firebase Firestore 11.1
+- **Auth**: Firebase Authentication (Google Sign-In)
+- **Storage**: Firebase Cloud Storage
+- **Payments**: Stripe 17.5
+- **Charts**: Recharts 2.15
+- **Icons**: Lucide React 0.460
+- **Validation**: Zod 3.24
+- **Deployment**: Firebase Hosting / Cloud Run / Vercel / Docker
+
+### Why Firebase?
+- **Simplified Backend**: No server management
+- **Real-time Sync**: Live progress updates across devices
+- **Generous Free Tier**: 50K reads/day, 20K writes/day
+- **Scalability**: Auto-scales with usage
+- **Unified Ecosystem**: Auth + Database + Storage + Hosting
+- **Cost Effective**: ~$10-30/month initially vs $40-70 with Postgres
+
+## 🔧 Additional Scripts
+
+```bash
+# Type checking
+npm run type-check
+
+# Linting with auto-fix
+npm run lint:fix
+
+# Code formatting
+npm run format
+
+# Check formatting without changes
+npm run format:check
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Database Connection Errors**
+- Verify your `POSTGRES_URL` is correct in `.env.local`
+- Check if the database is accessible from your network
+- Ensure database tables are created (run schema.sql)
+
+**NextAuth Session Issues**
+- Generate a new `NEXTAUTH_SECRET` using `openssl rand -base64 32`
+- Ensure `NEXTAUTH_URL` matches your app URL
+
+**Stripe Webhook Failures**
+- For local development, use Stripe CLI: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
+- Ensure `STRIPE_WEBHOOK_SECRET` matches your webhook endpoint
+
+**Build Errors**
+- Clear `.next` folder: `rm -rf .next`
+- Clear node_modules and reinstall: `rm -rf node_modules && npm install`
+- Run type checking: `npm run type-check`
 
 ## 📧 Support
 
 For issues or questions, create an issue on GitHub.
+
+## 📄 License
+
+MIT License - see LICENSE file for details.

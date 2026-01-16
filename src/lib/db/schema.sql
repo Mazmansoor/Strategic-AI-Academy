@@ -95,6 +95,20 @@ CREATE TABLE IF NOT EXISTS payments (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Primer Purchases table
+CREATE TABLE IF NOT EXISTS primer_purchases (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  email VARCHAR(255) NOT NULL,
+  stripe_payment_intent_id VARCHAR(255) UNIQUE,
+  amount INTEGER NOT NULL,
+  currency VARCHAR(3) DEFAULT 'usd',
+  status VARCHAR(50) NOT NULL,
+  access_granted BOOLEAN DEFAULT false,
+  purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_enrollments_user_id ON enrollments(user_id);
@@ -102,3 +116,6 @@ CREATE INDEX IF NOT EXISTS idx_user_progress_user_id ON user_progress(user_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_id ON subscriptions(stripe_subscription_id);
 CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);
+CREATE INDEX IF NOT EXISTS idx_primer_purchases_user_id ON primer_purchases(user_id);
+CREATE INDEX IF NOT EXISTS idx_primer_purchases_email ON primer_purchases(email);
+CREATE INDEX IF NOT EXISTS idx_primer_purchases_stripe_id ON primer_purchases(stripe_payment_intent_id);

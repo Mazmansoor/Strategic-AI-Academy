@@ -1,0 +1,31 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // User profile images
+    match /users/{userId}/profile/{fileName} {
+      allow read: if true; // Public profile images
+      allow write: if request.auth != null && request.auth.uid == userId
+                   && request.resource.size < 5 * 1024 * 1024 // 5MB max
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Course content (videos, PDFs, etc.)
+    match /courses/{courseId}/{allPaths=**} {
+      allow read: if request.auth != null; // Only authenticated users
+      allow write: if false; // Only admins via backend
+    }
+
+    // Team assets
+    match /teams/{teamId}/{allPaths=**} {
+      allow read: if request.auth != null; // Team members only (check in app)
+      allow write: if request.auth != null; // Team admins only (check in app)
+    }
+
+    // Certificate storage
+    match /certificates/{userId}/{certificateId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false; // Only backend generates certificates
+    }
+  }
+}

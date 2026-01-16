@@ -1,0 +1,98 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isTeamAdmin(teamId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/teams/$(teamId)/members/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/teams/$(teamId)/members/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isTeamMember(teamId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/teams/$(teamId)/members/$(request.auth.uid));
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isOwner(userId);
+      allow delete: if false; // Prevent user deletion via client
+
+      // User's enrollments
+      match /enrollments/{enrollmentId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // User's progress
+      match /progress/{progressId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // User's diagnostic results
+      match /diagnostics/{diagnosticId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Teams/Organizations collection
+    match /teams/{teamId} {
+      allow read: if isTeamMember(teamId);
+      allow create: if isSignedIn();
+      allow update, delete: if isTeamAdmin(teamId);
+
+      // Team members
+      match /members/{memberId} {
+        allow read: if isTeamMember(teamId);
+        allow create: if isTeamAdmin(teamId);
+        allow update, delete: if isTeamAdmin(teamId);
+      }
+
+      // Team subscriptions
+      match /subscriptions/{subscriptionId} {
+        allow read: if isTeamMember(teamId);
+        allow write: if isTeamAdmin(teamId);
+      }
+    }
+
+    // Courses collection (public read)
+    match /courses/{courseId} {
+      allow read: if true; // Public courses catalog
+      allow write: if false; // Only admins can write via backend
+
+      // Course modules
+      match /modules/{moduleId} {
+        allow read: if true;
+        allow write: if false;
+      }
+
+      // Course tracks (difficulty levels)
+      match /tracks/{trackId} {
+        allow read: if true;
+        allow write: if false;
+      }
+    }
+
+    // Subscriptions collection
+    match /subscriptions/{subscriptionId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false; // Only backend can write
+    }
+
+    // Payments collection
+    match /payments/{paymentId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false; // Only backend can write
+    }
+  }
+}

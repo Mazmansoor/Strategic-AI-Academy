@@ -1,36 +1,44 @@
 {
-  "name": "strategic-ai-academy-nextjs",
-  "version": "2.0.0",
+  "name": "zavia-ai-academy",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "firebase:emulators": "firebase emulators:start",
+    "firebase:deploy": "firebase deploy"
   },
   "dependencies": {
-    "next": "^14.2.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "next-auth": "^4.24.0",
-    "@vercel/postgres": "^0.9.0",
-    "stripe": "^14.21.0",
-    "@stripe/stripe-js": "^3.0.0",
-    "recharts": "^2.12.0",
-    "bcryptjs": "^2.4.3",
-    "zod": "^3.22.0",
-    "lucide-react": "^0.309.0"
+    "next": "^15.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "firebase": "^11.1.0",
+    "firebase-admin": "^13.0.1",
+    "stripe": "^17.5.0",
+    "@stripe/stripe-js": "^5.0.0",
+    "@stripe/firestore-stripe-payments": "^0.0.9",
+    "recharts": "^2.15.0",
+    "zod": "^3.24.0",
+    "lucide-react": "^0.460.0",
+    "date-fns": "^4.1.0"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "@types/node": "^20.11.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@types/bcryptjs": "^2.4.6",
-    "tailwindcss": "^3.4.0",
-    "postcss": "^8.4.0",
-    "autoprefixer": "^10.4.0",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.0"
+    "typescript": "^5.7.0",
+    "@types/node": "^20.19.0",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "tailwindcss": "^3.4.19",
+    "postcss": "^8.4.49",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.1.0",
+    "prettier": "^3.4.2",
+    "firebase-tools": "^13.29.1"
   }
 }
