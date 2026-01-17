@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Navigation from '@/components/Navigation';
 import { getAllCourses } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -7,55 +8,18 @@ export default async function CoursesPage() {
   const courses = await getAllCourses();
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-8 py-6 flex justify-between items-center">
-          <Link href="/" className="text-lg font-medium text-gray-900 tracking-tight">
-            Strategic AI Academy
-          </Link>
-          <div className="flex gap-8 items-center">
-            <Link
-              href="/courses"
-              className="text-sm text-gray-900 font-medium"
-            >
-              Capabilities
-            </Link>
-            <Link
-              href="/diagnostic"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Diagnostic
-            </Link>
-            <Link
-              href="/how-it-works"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/manifesto"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Manifesto
-            </Link>
-            <Link
-              href="/login"
-              className="text-sm text-gray-900 border border-gray-900 px-4 py-2 hover:bg-gray-900 hover:text-white transition-colors"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <Navigation />
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-8 py-24">
-        <div className="mb-24">
-          <h1 className="text-4xl font-light text-gray-900 mb-6">Capabilities</h1>
-          <p className="text-lg text-gray-600 leading-relaxed max-w-2xl">
-            Each capability moves through four levels of judgment. Foundation is free.
-            Advanced levels require demonstrated competence.
+      <div className="max-w-6xl mx-auto px-6 lg:px-8 py-16">
+        <div className="mb-12">
+          <div className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full mb-4">
+            100% Free Access
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-notion-text mb-6">Learning Capabilities</h1>
+          <p className="text-lg text-notion-text-light leading-relaxed max-w-3xl">
+            All core content is completely free. Each capability progresses through four levels of judgment mastery. Start with Foundation and advance as you demonstrate competence.
           </p>
         </div>
 

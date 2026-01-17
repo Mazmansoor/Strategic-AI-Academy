@@ -11,15 +11,25 @@ export default function PrimerPage() {
         <article className="bg-white rounded-2xl shadow-sm border border-notion-border p-8 md:p-12 mb-16">
           {/* Title */}
           <header className="mb-16">
-            <div className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-full mb-4">
-              90-Minute Deep Dive
+            <div className="flex items-center gap-3 mb-4">
+              <div className="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
+                Optional Premium Content
+              </div>
+              <div className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                Free Content Available
+              </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-notion-text mb-6 leading-tight">
               Strategic AI Judgment Primer
             </h1>
-            <p className="text-xl text-notion-text-light leading-relaxed">
-              A systematic introduction to evaluating AI output in high-stakes decisions.
+            <p className="text-xl text-notion-text-light leading-relaxed mb-4">
+              A systematic 90-minute introduction to evaluating AI output in high-stakes decisions.
             </p>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <p className="text-sm text-green-800">
+                <strong>Note:</strong> This is optional premium content. All core learning materials, diagnostic tools, and foundation-level courses are completely free. <Link href="/signup" className="underline font-semibold">Start learning for free →</Link>
+              </p>
+            </div>
           </header>
 
           {/* What This Is */}
@@ -133,14 +143,20 @@ export default function PrimerPage() {
             </div>
           </section>
 
-          {/* Alternative Path */}
-          <div className="pt-8 border-t border-notion-border">
-            <p className="text-sm text-notion-text-light mb-4">
-              Not ready to commit? <Link href="/diagnostic" className="text-primary-600 hover:text-primary-700 font-semibold">Take the diagnostic</Link> first to understand your current judgment patterns.
-            </p>
-            <p className="text-sm text-notion-text-light">
-              Looking for comprehensive training? View <Link href="/courses" className="text-primary-600 hover:text-primary-700 font-semibold">full capabilities</Link>.
-            </p>
+          {/* Free Alternative */}
+          <div className="pt-8 border-t border-notion-border bg-green-50 -mx-8 md:-mx-12 px-8 md:px-12 pb-8 rounded-b-2xl">
+            <h3 className="font-bold text-notion-text mb-4">Prefer to start for free?</h3>
+            <div className="space-y-3">
+              <p className="text-sm text-notion-text-light">
+                <Link href="/signup" className="text-primary-600 hover:text-primary-700 font-semibold">Create a free account</Link> to access foundation content, diagnostic tools, and community resources.
+              </p>
+              <p className="text-sm text-notion-text-light">
+                <Link href="/diagnostic" className="text-primary-600 hover:text-primary-700 font-semibold">Take the free diagnostic</Link> to understand your current judgment patterns.
+              </p>
+              <p className="text-sm text-notion-text-light">
+                <Link href="/courses" className="text-primary-600 hover:text-primary-700 font-semibold">View all free capabilities</Link> available without payment.
+              </p>
+            </div>
           </div>
         </article>
       </div>

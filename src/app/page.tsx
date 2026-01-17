@@ -110,62 +110,109 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* Primer Callout */}
+        {/* Free Content Highlight */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-24 max-w-5xl mx-auto"
+          className="mb-24 max-w-6xl mx-auto"
         >
-          <div className="bg-gradient-to-br from-primary-50 to-white border border-primary-200 rounded-2xl p-8 md:p-12 shadow-lg hover:shadow-xl transition-shadow">
-            <div className="flex items-start justify-between mb-6">
-              <div className="inline-block px-3 py-1 bg-primary-100 text-primary-700 text-xs font-semibold rounded-full uppercase tracking-wide">
-                Premium Content
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-notion-text">$147</span>
-                <span className="text-sm text-notion-text-light">one-time</span>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Main Free Content */}
+            <div className="lg:col-span-2">
+              <div className="bg-gradient-to-br from-green-50 to-white border border-green-200 rounded-2xl p-8 md:p-10 shadow-lg">
+                <div className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full uppercase tracking-wide mb-6">
+                  100% Free Access
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-notion-text mb-4">
+                  Start Building AI Judgment Skills
+                </h2>
+                <p className="text-lg text-notion-text-light mb-8 leading-relaxed">
+                  Access our complete diagnostic assessment, foundation-level content, and community resources. No payment required. No trial period. Genuinely free.
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600 flex-shrink-0 mt-1">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-notion-text mb-1">Free Diagnostic</div>
+                      <div className="text-sm text-notion-text-light">Understand your judgment patterns</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600 flex-shrink-0 mt-1">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-notion-text mb-1">Foundation Content</div>
+                      <div className="text-sm text-notion-text-light">Core AI judgment frameworks</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600 flex-shrink-0 mt-1">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-notion-text mb-1">Community Access</div>
+                      <div className="text-sm text-notion-text-light">Connect with other learners</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600 flex-shrink-0 mt-1">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-notion-text mb-1">No Credit Card</div>
+                      <div className="text-sm text-notion-text-light">Just create an account</div>
+                    </div>
+                  </div>
+                </div>
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-notion-accent text-white rounded-lg font-semibold hover:bg-primary-700 transition-all shadow-md hover:shadow-lg"
+                >
+                  Get Started Free →
+                </Link>
               </div>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-notion-text mb-4">
-              Strategic AI Judgment Primer
-            </h2>
-            <p className="text-lg text-notion-text-light mb-8 leading-relaxed">
-              A 90-minute deep dive into the three failure modes that occur when decision-makers delegate judgment to AI without verification systems. Real case studies. Systematic frameworks. Immediately applicable.
-            </p>
-            <div className="grid md:grid-cols-3 gap-4 mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+
+            {/* Optional Premium Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl p-6 shadow-sm sticky top-24">
+                <div className="inline-block px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full mb-4">
+                  Optional Premium
                 </div>
-                <span className="text-sm font-medium text-notion-text">90 minutes</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
+                <h3 className="text-xl font-bold text-notion-text mb-3">
+                  90-Minute Primer
+                </h3>
+                <p className="text-sm text-notion-text-light mb-4 leading-relaxed">
+                  Deep dive into the three failure modes when delegating judgment to AI. Case studies and frameworks.
+                </p>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-2xl font-bold text-notion-text">$147</span>
+                  <span className="text-xs text-notion-text-light">one-time</span>
                 </div>
-                <span className="text-sm font-medium text-notion-text">Lifetime access</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-notion-text">Instant delivery</span>
+                <Link
+                  href="/primer"
+                  className="block text-center px-4 py-2 border-2 border-notion-text text-notion-text rounded-lg font-semibold hover:bg-notion-text hover:text-white transition-all text-sm"
+                >
+                  Learn More
+                </Link>
+                <p className="text-xs text-notion-text-light mt-3 text-center">
+                  Not required to access free content
+                </p>
               </div>
             </div>
-            <Link
-              href="/primer"
-              className="inline-flex items-center justify-center px-8 py-4 bg-notion-accent text-white rounded-lg font-semibold hover:bg-primary-700 transition-all shadow-md hover:shadow-lg"
-            >
-              Get Instant Access
-            </Link>
           </div>
         </motion.div>
 
