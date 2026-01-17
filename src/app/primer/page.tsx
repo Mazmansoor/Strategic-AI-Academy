@@ -1,59 +1,23 @@
 import Link from 'next/link';
+import Navigation from '@/components/Navigation';
 
 export default function PrimerPage() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-8 py-6 flex justify-between items-center">
-          <Link href="/" className="text-lg font-medium text-gray-900 tracking-tight">
-            Strategic AI Academy
-          </Link>
-          <div className="flex gap-8 items-center">
-            <Link
-              href="/courses"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Capabilities
-            </Link>
-            <Link
-              href="/diagnostic"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Diagnostic
-            </Link>
-            <Link
-              href="/how-it-works"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/manifesto"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Manifesto
-            </Link>
-            <Link
-              href="/login"
-              className="text-sm text-gray-900 border border-gray-900 px-4 py-2 hover:bg-gray-900 hover:text-white transition-colors"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <Navigation />
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-8 py-24">
-        <article className="space-y-16">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8 py-16">
+        <article className="bg-white rounded-2xl shadow-sm border border-notion-border p-8 md:p-12 mb-16">
           {/* Title */}
-          <header className="mb-24">
-            <div className="text-sm text-gray-400 mb-4">90-Minute Deep Dive</div>
-            <h1 className="text-4xl font-light text-gray-900 mb-8 leading-tight">
+          <header className="mb-16">
+            <div className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-full mb-4">
+              90-Minute Deep Dive
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-notion-text mb-6 leading-tight">
               Strategic AI Judgment Primer
             </h1>
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-xl text-notion-text-light leading-relaxed">
               A systematic introduction to evaluating AI output in high-stakes decisions.
             </p>
           </header>
@@ -149,31 +113,33 @@ export default function PrimerPage() {
 
           {/* Pricing */}
           <section className="pb-16">
-            <div className="flex items-baseline justify-between mb-8">
-              <h2 className="text-xl font-medium text-gray-900">Investment</h2>
-              <div className="text-3xl font-light text-gray-900">$147</div>
+            <div className="bg-gradient-to-br from-primary-50 to-white border border-primary-200 rounded-xl p-8">
+              <div className="flex items-baseline justify-between mb-6">
+                <h2 className="text-2xl font-bold text-notion-text">Investment</h2>
+                <div className="text-4xl font-bold text-primary-600">$147</div>
+              </div>
+              <p className="text-base text-notion-text-light mb-8 leading-relaxed">
+                One-time payment. Lifetime access. No subscription.
+              </p>
+              <Link
+                href="/primer/checkout"
+                className="inline-flex items-center justify-center w-full px-8 py-4 bg-notion-accent text-white rounded-lg font-semibold hover:bg-primary-700 transition-all shadow-md hover:shadow-lg mb-4"
+              >
+                Purchase Primer →
+              </Link>
+              <p className="text-sm text-notion-text-light text-center">
+                Requires account. <Link href="/signup" className="text-primary-600 hover:text-primary-700 font-semibold">Create one here</Link> if you don't have one yet.
+              </p>
             </div>
-            <p className="text-base text-gray-600 mb-12 leading-relaxed">
-              One-time payment. Lifetime access. No subscription.
-            </p>
-            <Link
-              href="/primer/checkout"
-              className="inline-block border-2 border-gray-900 text-gray-900 px-12 py-4 text-base font-medium hover:bg-gray-900 hover:text-white transition-colors"
-            >
-              Purchase Primer
-            </Link>
-            <p className="text-sm text-gray-500 mt-6">
-              Requires account. <Link href="/signup" className="border-b border-gray-400 hover:border-gray-900 transition-colors">Create one here</Link> if you don't have one yet.
-            </p>
           </section>
 
           {/* Alternative Path */}
-          <div className="pt-16 border-t border-gray-200">
-            <p className="text-sm text-gray-600 mb-6">
-              Not ready to commit? <Link href="/diagnostic" className="text-gray-900 border-b border-gray-900 hover:border-gray-400 transition-colors">Take the diagnostic</Link> first to understand your current judgment patterns.
+          <div className="pt-8 border-t border-notion-border">
+            <p className="text-sm text-notion-text-light mb-4">
+              Not ready to commit? <Link href="/diagnostic" className="text-primary-600 hover:text-primary-700 font-semibold">Take the diagnostic</Link> first to understand your current judgment patterns.
             </p>
-            <p className="text-sm text-gray-600">
-              Looking for comprehensive training? View <Link href="/courses" className="text-gray-900 border-b border-gray-900 hover:border-gray-400 transition-colors">full capabilities</Link>.
+            <p className="text-sm text-notion-text-light">
+              Looking for comprehensive training? View <Link href="/courses" className="text-primary-600 hover:text-primary-700 font-semibold">full capabilities</Link>.
             </p>
           </div>
         </article>

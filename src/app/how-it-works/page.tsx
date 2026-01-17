@@ -1,58 +1,20 @@
 import Link from 'next/link';
+import Navigation from '@/components/Navigation';
 
 export default function HowItWorksPage() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-8 py-6 flex justify-between items-center">
-          <Link href="/" className="text-lg font-medium text-gray-900 tracking-tight">
-            Strategic AI Academy
-          </Link>
-          <div className="flex gap-8 items-center">
-            <Link
-              href="/courses"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Capabilities
-            </Link>
-            <Link
-              href="/diagnostic"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Diagnostic
-            </Link>
-            <Link
-              href="/how-it-works"
-              className="text-sm text-gray-900 font-medium"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/manifesto"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Manifesto
-            </Link>
-            <Link
-              href="/login"
-              className="text-sm text-gray-900 border border-gray-900 px-4 py-2 hover:bg-gray-900 hover:text-white transition-colors"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <Navigation />
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-8 py-24">
-        <article className="space-y-16">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8 py-16">
+        <article className="bg-white rounded-2xl shadow-sm border border-notion-border p-8 md:p-12 mb-16">
           {/* Title */}
-          <header className="mb-24">
-            <h1 className="text-4xl font-light text-gray-900 mb-8 leading-tight">
+          <header className="mb-16">
+            <h1 className="text-4xl md:text-5xl font-bold text-notion-text mb-6 leading-tight">
               How This Actually Works
             </h1>
-            <p className="text-base text-gray-600 leading-relaxed">
+            <p className="text-lg text-notion-text-light leading-relaxed">
               Most AI training is a black box. You pay. You get content. You trust it works.
               We show you exactly what we do and why.
             </p>
@@ -174,12 +136,12 @@ export default function HowItWorksPage() {
           </section>
 
           {/* CTA */}
-          <div className="pt-16">
+          <div className="pt-8 border-t border-notion-border mt-16">
             <Link
               href="/courses"
-              className="inline-block border-2 border-gray-900 text-gray-900 px-8 py-3 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 bg-notion-accent text-white rounded-lg font-semibold hover:bg-primary-700 transition-all shadow-md hover:shadow-lg"
             >
-              View Capabilities
+              View Capabilities →
             </Link>
           </div>
         </article>
